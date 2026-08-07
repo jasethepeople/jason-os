@@ -1,0 +1,27 @@
+{
+  "name": "@jason-os/soft-anchor",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Emotional re-anchoring system on stress spikes",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@jason-os/shared": "workspace:*",
+    "@jason-os/event-bus": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  }
+}

@@ -1,0 +1,53 @@
+cff-version: 1.2.0
+message: "If you use this software in your research, please cite it using these metadata."
+type: software
+title: "Jason-OS: A Privacy-First Psychological Operating System"
+abstract: >
+  Jason-OS is a modular, privacy-first software architecture designed to explore
+  the intersection of psychological safety, emotional telemetry, and
+  privacy-preserving computation. The system implements a novel four-tier privacy
+  model (PUBLIC, SOFT, SHADOW, GHOST) that governs data persistence, encryption
+  depth, and ephemerality at runtime as a first-class architectural primitive.
+  Emotional state is modeled using an extended VAD+Stress dimensional framework
+  (valence, arousal, dominance, stress) and drives adaptive interface behavior.
+  The 40-module ecosystem communicates through a priority-queued event bus with
+  sandboxed isolation, end-to-end encrypted sync, and coercion-resistant
+  mechanisms including duress passwords, decoy vaults, and panic lockdown modes.
+authors:
+  - family-names: "[Contributor]"
+    given-names: "[Your Name]"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
+    affiliation: "Jason-OS Research"
+  - family-names: "[Contributor]"
+    given-names: "[Your Friend's Name]"
+    affiliation: "Jason-OS Research"
+repository-code: "https://github.com/jasethepeople/jason-os"
+license: MIT
+version: 0.6.0
+date-released: 2024-08-07
+keywords:
+  - privacy-preserving computation
+  - psychological safety
+  - emotional telemetry
+  - dimensional affect model
+  - VAD+Stress
+  - end-to-end encryption
+  - coercion resistance
+  - human-centered computing
+  - modular architecture
+  - software sandboxing
+  - secure sync
+  - decoy systems
+  - plausibly deniable storage
+  - TypeScript
+  - monorepo
+preferred-citation:
+  type: software
+  title: "Jason-OS: A Privacy-First Psychological Operating System"
+  authors:
+    - family-names: "[Contributor]"
+      given-names: "[Your Name]"
+    - family-names: "[Contributor]"
+      given-names: "[Your Friend's Name]"
+  year: 2024
+  url: "https://github.com/jasethepeople/jason-os"

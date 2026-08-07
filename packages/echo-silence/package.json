@@ -1,0 +1,27 @@
+{
+  "name": "@jason-os/echo-silence",
+  "version": "0.1.0",
+  "description": "Meditation and silence companion with personalized quiet spaces",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vitest": "^1.1.0",
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.0"
+  }
+}

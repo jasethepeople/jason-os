@@ -1,0 +1,41 @@
+# Node.js
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+coverage/
+.nyc_output/
+
+# Package managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+npm-debug.log*
+.pnpm-debug.log*
+
+# Turborepo
+.turbo/
+
+# TypeScript
+*.d.ts.map
+*.js.map
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# OS
+Thumbs.db

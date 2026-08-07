@@ -1,0 +1,52 @@
+{
+  "name": "jason-os",
+  "version": "0.6.0",
+  "description": "A modular, privacy-first psychological operating system for human-centered computing",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint packages/ --ext .ts",
+    "format": "prettier --write \"packages/**/*.ts\"",
+    "format:check": "prettier --check \"packages/**/*.ts\"",
+    "clean": "rm -rf packages/*/dist packages/*/*.tsbuildinfo .turbo",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_USERNAME/jason-os.git"
+  },
+  "keywords": [
+    "privacy",
+    "psychological-computing",
+    "emotional-telemetry",
+    "end-to-end-encryption",
+    "coercion-resistance",
+    "human-centered-design",
+    "vad-model",
+    "modular-architecture",
+    "typescript",
+    "monorepo"
+  ],
+  "author": "Jason-OS Contributors",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "turbo": "^1.10.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

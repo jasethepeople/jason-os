@@ -1,0 +1,30 @@
+{
+  "name": "@jason-os/ghost-workspace",
+  "version": "0.1.0",
+  "description": "Hidden workspace environment — privacy-focused workspace management with decoy mode",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@jason-os/shared": "workspace:*",
+    "@jason-os/event-bus": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0",
+    "@types/node": "^20.10.0"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@jason-os/event-bus",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Event bus for cross-module communication in Jason-OS",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@jason-os/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}
