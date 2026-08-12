@@ -1,5 +1,7 @@
 # Jason-OS
 
+https://youtube.com/shorts/F21gVQbQwzQ?si=IakPmElDKWlfs8ZF
+
 > A modular, privacy-first psychological operating system for human-centered computing.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-3178C6?logo=typescript)](https://www.typescriptlang.org/)
