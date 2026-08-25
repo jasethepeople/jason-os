@@ -5,7 +5,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { EventBusImpl, createEventBus } from './event-bus.js';
-import type { EventPayload, Subscription } from '@jason-os/shared';
+import type { EventPayload } from '@jason-os/shared';
 
 // ------------------------------------------------------------------
 // Helpers
