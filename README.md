@@ -227,3 +227,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines and [ARCHITECT
 ---
 
 *Jason-OS is a research artifact. It is not a medical device, therapeutic tool, or FDA-regulated software. It is intended for researchers, developers, and privacy advocates exploring the frontier of human-centered system design.*
+
+![CI](https://github.com/jasethepeople/jason-os/actions/workflows/ci.yml/badge.svg)
