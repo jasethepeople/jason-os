@@ -6,7 +6,8 @@
     "composite": true,
     "lib": [
       "DOM",
-      "ES2020"
+      "ES2020",
+      "ES2021"
     ]
   },
   "include": [

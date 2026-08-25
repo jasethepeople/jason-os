@@ -6,6 +6,7 @@
     "composite": true,
     "lib": [
       "DOM",
+      "ES2021",
       "ES2022"
     ]
   },

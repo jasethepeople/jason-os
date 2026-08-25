@@ -5,6 +5,7 @@
     "moduleResolution": "NodeNext",
     "lib": [
       "DOM",
+      "ES2021",
       "ES2022"
     ],
     "outDir": "./dist",

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "lib": [
       "DOM",
+      "ES2021",
       "ES2022"
     ],
     "target": "ES2022",
