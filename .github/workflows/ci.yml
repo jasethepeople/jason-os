@@ -20,7 +20,7 @@ jobs:
       with:
         version: 8
     - name: Install dependencies (with scripts)
-      run: pnpm install --ignore-scripts=false
+      run: pnpm install --ignore-scripts=false --no-frozen-lockfile
     - name: Build all packages
       run: pnpm -r run build
     - name: Run tests
