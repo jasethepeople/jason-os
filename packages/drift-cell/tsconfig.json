@@ -1,10 +1,26 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": { "outDir": "./dist", "rootDir": "./src", "composite": true },
-  "include": ["src/**/*"],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "lib": [
+      "DOM",
+      "ES2020"
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ],
   "references": [
-    { "path": "../shared" },
-    { "path": "../event-bus" },
-    { "path": "../emotional-telemetry" }
+    {
+      "path": "../shared"
+    },
+    {
+      "path": "../event-bus"
+    },
+    {
+      "path": "../emotional-telemetry"
+    }
   ]
 }

@@ -4,11 +4,20 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "composite": true,
-    "lib": ["ES2022", "DOM"]
+    "lib": [
+      "DOM",
+      "ES2022"
+    ]
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "references": [
-    { "path": "../shared" },
-    { "path": "../event-bus" }
+    {
+      "path": "../shared"
+    },
+    {
+      "path": "../event-bus"
+    }
   ]
 }

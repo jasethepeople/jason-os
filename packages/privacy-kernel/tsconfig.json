@@ -4,8 +4,17 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "composite": true,
-    "lib": ["ES2022", "DOM"]
+    "lib": [
+      "DOM",
+      "ES2022"
+    ]
   },
-  "include": ["src/**/*"],
-  "references": [{ "path": "../shared" }]
+  "include": [
+    "src/**/*"
+  ],
+  "references": [
+    {
+      "path": "../shared"
+    }
+  ]
 }

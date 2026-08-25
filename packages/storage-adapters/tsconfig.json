@@ -3,8 +3,18 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "composite": true
+    "composite": true,
+    "lib": [
+      "DOM",
+      "ES2020"
+    ]
   },
-  "include": ["src/**/*"],
-  "references": [{ "path": "../shared" }]
+  "include": [
+    "src/**/*"
+  ],
+  "references": [
+    {
+      "path": "../shared"
+    }
+  ]
 }

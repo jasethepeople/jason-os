@@ -3,11 +3,21 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "lib": [
+      "DOM",
+      "ES2020"
+    ]
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "references": [
-    { "path": "../shared" },
-    { "path": "../event-bus" }
+    {
+      "path": "../shared"
+    },
+    {
+      "path": "../event-bus"
+    }
   ]
 }

@@ -3,8 +3,21 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "composite": true
+    "composite": true,
+    "lib": [
+      "DOM",
+      "ES2020"
+    ]
   },
-  "include": ["src/**/*"],
-  "references": [{ "path": "../shared" }, { "path": "../privacy-kernel" }]
+  "include": [
+    "src/**/*"
+  ],
+  "references": [
+    {
+      "path": "../shared"
+    },
+    {
+      "path": "../privacy-kernel"
+    }
+  ]
 }
