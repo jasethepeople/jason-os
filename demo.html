@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Jason‑OS Demo</title>
+</head>
+<body>
+  <h1>Jason‑OS – Event Bus Test</h1>
+  <button id="fire">Fire Event</button>
+  <pre id="log"></pre>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "@jason-os/event-bus": "./packages/event-bus/dist/index.js"
+    }
+  }
+  </script>
+  <script type="module">
+    import { EventBus } from '@jason-os/event-bus';
+
+    const bus = new EventBus();
+    const log = document.getElementById('log');
+
+    // Subscribe to a 'test' event
+    bus.subscribe('test', (payload) => {
+      log.textContent = `Received: ${JSON.stringify(payload)}`;
+    });
+
+    // Fire on button click
+    document.getElementById('fire').onclick = () => {
+      bus.publish('test', { message: 'Hello from Jason-OS!', time: Date.now() });
+    };
+  </script>
+</body>
+</html>

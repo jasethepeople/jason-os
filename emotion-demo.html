@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Jason‑OS – Emotion Demo</title>
+</head>
+<body>
+  <h1>🧠 Emotional Telemetry</h1>
+  <button id="sample">Sample Mood</button>
+  <pre id="output"></pre>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "@jason-os/emotional-telemetry": "./packages/emotional-telemetry/dist/index.js"
+    }
+  }
+  </script>
+  <script type="module">
+    // Note: I don't know the exact exported function names – we'll use a dummy for now.
+    // Open the actual package's dist/index.js to see what's exported, or check its test file.
+    // For now, let's import the module and log it to see what's available.
+    import * as emotion from '@jason-os/emotional-telemetry';
+    
+    document.getElementById('sample').onclick = () => {
+      // This will show all exported functions/objects from the module
+      document.getElementById('output').textContent = 
+        'Exported API:\n' + Object.keys(emotion).join('\n');
+    };
+  </script>
+</body>
+</html>
