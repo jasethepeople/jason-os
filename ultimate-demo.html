@@ -128,20 +128,18 @@
     let focusInterval = null;
 
     document.getElementById('startFocus').addEventListener('click', () => {
-      // Start a 5-minute focus session
       const duration = 5 * 60 * 1000; 
-      focus.start(duration); // assuming .start() exists
+      focus.start(duration);
       document.getElementById('focusStatus').textContent = 'Focusing... (5 min)';
       document.getElementById('focusOutput').textContent = 'Focus session started. Stay concentrated!';
 
       if (focusInterval) clearInterval(focusInterval);
       focusInterval = setInterval(() => {
-        const state = focus.getState(); // assuming .getState() returns remaining time or status
+        const state = focus.getState();
         document.getElementById('focusOutput').textContent = 
           `⏱️ Focus in progress...\n${JSON.stringify(state, null, 2)}`;
       }, 1000);
 
-      // Auto-stop after 5 min (for demo)
       setTimeout(() => {
         document.getElementById('stopFocus').click();
       }, duration);
@@ -149,7 +147,7 @@
 
     document.getElementById('stopFocus').addEventListener('click', () => {
       if (focusInterval) clearInterval(focusInterval);
-      focus.stop(); // assuming .stop() exists
+      focus.stop();
       document.getElementById('focusStatus').textContent = 'Idle (Completed)';
       document.getElementById('focusOutput').textContent = 'Focus session ended. Great work! 🎯';
     });
@@ -160,11 +158,10 @@
     import { createEncryptedVault } from '@jason-os/encrypted-vaults';
     import { createStorageAdapter } from '@jason-os/storage-adapters';
 
-    // Use memory storage for demo (or localStorage by default)
     const storage = createStorageAdapter('memory'); 
     const vault = createEncryptedVault({
       storageAdapter: storage,
-      masterPassword: 'demo-password-123' // In real life, prompt the user!
+      masterPassword: 'demo-password-123'
     });
 
     document.getElementById('saveNote').addEventListener('click', async () => {
@@ -198,9 +195,6 @@
       }
     });
 
-    // =============================================
-    // Initialize with a default mood sample
-    // =============================================
     setTimeout(() => {
       moodEngine.captureSample({
         valence: 0.2, arousal: 0.5, dominance: 0.6, stress: 0.1,
