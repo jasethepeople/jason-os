@@ -133,7 +133,7 @@ export function secureRandom(bytes: number): Uint8Array {
   if (bytes <= 0 || !Number.isInteger(bytes)) {
     throw new Error('secureRandom: byte count must be a positive integer');
   }
-  return randomBytes(bytes);
+  return new Uint8Array(randomBytes(bytes));
 }
 
 // ------------------------------------------------------------------

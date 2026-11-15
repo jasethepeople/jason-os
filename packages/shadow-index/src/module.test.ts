@@ -62,7 +62,8 @@ describe('ShadowIndex — indexing', () => {
 
   it('should index encrypted content', () => {
     const si = new ShadowIndex();
-    si.index('doc-1', 'secret message', 'test-module', { encrypted: true });
+    // Encrypted content is never searchable by its text, only by tag
+    si.index('doc-1', 'secret message', 'test-module', { encrypted: true, tags: ['secret'] });
     const results = si.search('secret');
     expect(results[0].content).toBe('[encrypted]');
     expect(results[0].encrypted).toBe(true);
@@ -149,8 +150,8 @@ describe('ShadowIndex — search', () => {
 
   it('should sort results by relevance score descending', () => {
     const si = new ShadowIndex();
-    si.index('doc-1', 'short', 'mod-a');
-    si.index('doc-2', 'a'.repeat(200), 'mod-a');
+    si.index('doc-1', 'a short note', 'mod-a'); // matches 'a', low score
+    si.index('doc-2', 'a'.repeat(200), 'mod-a'); // matches 'a', high score
     const results = si.search('a');
     expect(results[0].id).toBe('doc-2');
     expect(results[1].id).toBe('doc-1');

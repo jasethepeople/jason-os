@@ -133,7 +133,23 @@ describe('ShadowModeController', () => {
     expect(controller.isActive()).toBe(true);
     controller.deactivate();
     expect(controller.isActive()).toBe(false);
-    expect(privacyKernel.getPrivacyTier()).toBe('SOFT');
+    expect(privacyKernel.getPrivacyTier()).toBe('PUBLIC'); // the tier before activate()
+  });
+
+  it('deactivate() restores the tier that was active before activation', () => {
+    privacyKernel.setPrivacyTier('SHADOW');
+    controller.activate();
+    expect(privacyKernel.getPrivacyTier()).toBe('GHOST');
+    controller.deactivate();
+    expect(privacyKernel.getPrivacyTier()).toBe('SHADOW'); // not silently downgraded to SOFT
+  });
+
+  it('panic() then deactivate() also restores the prior tier', () => {
+    privacyKernel.setPrivacyTier('PUBLIC');
+    controller.panic();
+    expect(privacyKernel.getPrivacyTier()).toBe('GHOST');
+    controller.deactivate();
+    expect(privacyKernel.getPrivacyTier()).toBe('PUBLIC');
   });
 
   // ================================================================

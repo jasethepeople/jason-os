@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { SoftArchive } from '../src/module';
 import type { ArchiveEventBus } from '../src/module';
 import type { SoftArchiveEvents } from '../src/types';

@@ -26,6 +26,8 @@ export class Underveil {
     /* no-op */
   }
 
+  private veilCounter = 0;
+
   giveConsent(): void {
     this.state.consentGiven = true;
     this.state.consentTimestamp = Date.now();
@@ -36,12 +38,16 @@ export class Underveil {
     this.state.consentGiven = false;
     this.state.consentTimestamp = null;
     this.state.activeVeilId = null;
+    // Revoking consent must also switch every veil off
+    this.state.veils.forEach((v) => {
+      v.active = false;
+    });
     this.emit('underveil:consent-revoked', {});
   }
 
   createVeil(label: string): Veil {
     const veil: Veil = {
-      id: `veil-${Date.now()}`,
+      id: `veil-${Date.now().toString(36)}-${++this.veilCounter}-${Math.random().toString(36).slice(2, 8)}`,
       label,
       active: false,
       createdAt: Date.now(),
@@ -69,7 +75,7 @@ export class Underveil {
   }
 
   getState(): UnderveilState {
-    return { ...this.state, veils: [...this.state.veils] };
+    return { ...this.state, veils: this.state.veils.map((v) => ({ ...v })) };
   }
 
   async destroy(): Promise<void> {

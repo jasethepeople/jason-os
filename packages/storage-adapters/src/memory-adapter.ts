@@ -83,6 +83,11 @@ export class MemoryAdapter implements StorageAdapter {
     return count;
   }
 
+  /** Synchronously drop everything this adapter holds (used on GHOST exit / panic). */
+  wipe(): void {
+    this.store.clear();
+  }
+
   /** Internal helper for tests — direct access to backing Map. */
   _getStore(): Map<string, string> {
     return this.store;

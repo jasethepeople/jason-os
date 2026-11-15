@@ -34,7 +34,8 @@ import {
 // ------------------------------------------------------------------
 
 const KEY_ID_BYTES = 16;
-const GHOST_KEY_TTL_MS = 0; // immediate — GHOST keys are ephemeral
+/** GHOST keys are short-lived: usable for a bounded window, then gone. */
+const DEFAULT_GHOST_KEY_TTL_MS = 60_000;
 const CURRENT_VERSION = 1;
 
 // ------------------------------------------------------------------
@@ -46,6 +47,15 @@ export class PrivacyKernel implements IPrivacyKernel {
   private readonly keychain: Keychain = new Keychain();
   private readonly tierHandlers: Set<(tier: PrivacyTier) => void> = new Set();
   private _keyCounter = 0;
+  private readonly ghostKeyTtlMs: number;
+
+  constructor(options: { ghostKeyTtlMs?: number } = {}) {
+    const ttl = options.ghostKeyTtlMs ?? DEFAULT_GHOST_KEY_TTL_MS;
+    if (!Number.isFinite(ttl) || ttl <= 0) {
+      throw new PrivacyError('ghostKeyTtlMs must be a positive number');
+    }
+    this.ghostKeyTtlMs = ttl;
+  }
 
   // ------------------------------------------------------------------
   // Privacy tier management
@@ -60,13 +70,13 @@ export class PrivacyKernel implements IPrivacyKernel {
     const previousTier = this._tier;
     this._tier = tier;
 
-    // GHOST tier: clear all existing keys and set ephemeral TTL
-    if (tier === 'GHOST') {
-      this.keychain.clear();
-    }
-
-    // Downgrading from GHOST/SHADOW to PUBLIC/SOFT: clear sensitive keys
-    if ((previousTier === 'GHOST' || previousTier === 'SHADOW') && (tier === 'PUBLIC' || tier === 'SOFT')) {
+    // Entering GHOST starts from a clean keychain; leaving GHOST (to any
+    // tier) must not carry ephemeral keys along; dropping SHADOW to a
+    // lower tier also clears sensitive keys.
+    const enteringGhost = tier === 'GHOST';
+    const leavingGhost = previousTier === 'GHOST';
+    const droppingShadow = previousTier === 'SHADOW' && (tier === 'PUBLIC' || tier === 'SOFT');
+    if (enteringGhost || leavingGhost || droppingShadow) {
       this.keychain.clear();
     }
 
@@ -186,7 +196,7 @@ export class PrivacyKernel implements IPrivacyKernel {
     const key = await this.importRawKey(rawKey, 'AES-GCM');
     const keyId = this.makeKeyId();
 
-    const ttl = this._tier === 'GHOST' ? GHOST_KEY_TTL_MS : undefined;
+    const ttl = this._tier === 'GHOST' ? this.ghostKeyTtlMs : undefined;
     this.keychain.storeKey(keyId, key, ttl);
 
     return {

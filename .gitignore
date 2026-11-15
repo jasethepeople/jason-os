@@ -39,3 +39,16 @@ logs/
 
 # OS
 Thumbs.db
+
+# Compiled output must never live next to sources (stale .js shadows .ts)
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+packages/*/tests/**/*.js
+packages/*/tests/**/*.d.ts
+vitest.config.js
+vitest.config.d.ts
+vitest.workspace.js
+vitest.workspace.d.ts
+*.tgz

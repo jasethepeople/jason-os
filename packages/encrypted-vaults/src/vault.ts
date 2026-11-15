@@ -180,7 +180,9 @@ export class EncryptedVault implements Vault {
       this.key = undefined;
     }
     this.locked = true;
-    this.clearBurnTimer();
+    // NOTE: the inactivity timer deliberately keeps running while locked.
+    // A time-based self-destruct that stops counting the moment the vault is
+    // locked would never fire for the exact state it exists to protect.
   }
 
   isLocked(): boolean {
@@ -276,10 +278,13 @@ export class EncryptedVault implements Vault {
 
   private resetBurnTimer(): void {
     this.clearBurnTimer();
-    if (this.selfDestruct?.type === 'time' && this.selfDestruct.timeLimitMs && !this.locked) {
+    if (this._burned) return;
+    if (this.selfDestruct?.type === 'time' && this.selfDestruct.timeLimitMs) {
       this.burnTimer = setTimeout(() => {
         void this.burn();
       }, this.selfDestruct.timeLimitMs);
+      // Don't let a pending self-destruct keep a Node process alive
+      (this.burnTimer as { unref?: () => void }).unref?.();
     }
   }
 

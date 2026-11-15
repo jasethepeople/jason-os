@@ -108,7 +108,7 @@ export class SoftArchive {
 
     for (const [id, item] of this.items) {
       const age = now - item.archivedAt;
-      if (age > ageThresholdMs) {
+      if (age >= ageThresholdMs) {
         // Reduce importance for old items
         item.importance *= this.config.importanceDecayFactor;
 

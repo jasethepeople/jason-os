@@ -159,13 +159,14 @@ describe('PrivacyKernel — interface methods', () => {
     kernel.setPrivacyTier('GHOST');
     const km = await kernel.generateSymmetricKey();
     expect(kernel.listKeyIds()).toContain(km.keyId);
-    // Keys in GHOST mode have 1-minute TTL; simulate expiry
+    // GHOST keys have a 60s TTL; store an extra 1ms key to simulate expiry
     const keychain = kernel.getKeychain();
     keychain.storeKey('expired-key', km.key, 1); // 1ms TTL
     await new Promise((r) => setTimeout(r, 10)); // wait for expiry
     const removed = kernel.purgeExpiredKeys();
     expect(removed).toBe(1);
     expect(kernel.listKeyIds()).not.toContain('expired-key');
+    expect(kernel.listKeyIds()).toContain(km.keyId); // live GHOST key untouched
   });
 
   it('should clear all keys on destroy', async () => {
@@ -237,9 +238,30 @@ describe('PrivacyKernel — tier transitions', () => {
   it('should clear keys when downgrading from GHOST to SOFT', async () => {
     kernel.setPrivacyTier('GHOST');
     await kernel.generateSymmetricKey();
-    expect(kernel.listKeyIds().length).toBe(0); // GHOST clears immediately
+    expect(kernel.listKeyIds().length).toBe(1); // usable while in GHOST
     kernel.setPrivacyTier('SOFT');
+    expect(kernel.listKeyIds().length).toBe(0); // gone on exit
+  });
+
+  it('should clear GHOST keys when moving GHOST → SHADOW too', async () => {
+    kernel.setPrivacyTier('GHOST');
+    await kernel.generateSymmetricKey();
+    kernel.setPrivacyTier('SHADOW');
     expect(kernel.listKeyIds().length).toBe(0);
+  });
+
+  it('GHOST keys stay usable within TTL and expire after it', async () => {
+    const k = new PrivacyKernel({ ghostKeyTtlMs: 30 });
+    k.setPrivacyTier('GHOST');
+    const km = await k.generateSymmetricKey();
+    const blob = await k.encrypt(new TextEncoder().encode('hi'), km.keyId);
+    expect(new TextDecoder().decode(await k.decrypt(blob, km.keyId))).toBe('hi');
+    await new Promise((r) => setTimeout(r, 60));
+    await expect(k.encrypt(new Uint8Array([1]), km.keyId)).rejects.toThrow(/Key not found/);
+  });
+
+  it('rejects a non-positive ghostKeyTtlMs', () => {
+    expect(() => new PrivacyKernel({ ghostKeyTtlMs: 0 })).toThrow();
   });
 
   it('should not clear keys when staying in same tier', async () => {

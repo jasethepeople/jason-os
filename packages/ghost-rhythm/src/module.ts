@@ -10,6 +10,14 @@ export const ghost_rhythm_module = {
 };
 
 export class GhostRhythm {
+  private lastId = 0;
+
+  /** Strictly increasing numeric id, so two calls in one millisecond never collide. */
+  private nextId(): number {
+    this.lastId = Math.max(Date.now(), this.lastId + 1);
+    return this.lastId;
+  }
+
   private state: GhostRhythmState = {
     habits: [],
     totalCompletions: 0,
@@ -27,7 +35,7 @@ export class GhostRhythm {
 
   createHabit(name: string, category: string, hidden = true): Habit {
     const habit: Habit = {
-      id: `habit-${Date.now()}`,
+      id: `habit-${this.nextId()}`,
       name,
       streak: 0,
       lastCompletedAt: null,

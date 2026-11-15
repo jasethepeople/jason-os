@@ -222,6 +222,7 @@ export class ShadowModeControllerImpl implements ShadowModeController {
   private _decoyMode = false;
   private _burnerActive = false;
   private _duressPassword: string | null = null;
+  private _tierBeforeActivation: PrivacyTier = 'SOFT';
   private readonly _handlers: Map<string, ShadowEventHandler[]> = new Map();
   private readonly _privacyKernel: IPrivacyKernel;
   private readonly _sessionManager: SessionManager;
@@ -252,7 +253,8 @@ export class ShadowModeControllerImpl implements ShadowModeController {
     this._active = true;
     this._activatedAt = Date.now();
 
-    // Step 1: Elevate privacy tier to GHOST
+    // Step 1: Remember the current tier, then elevate to GHOST
+    this._tierBeforeActivation = this._privacyKernel.getPrivacyTier();
     this._privacyKernel.setPrivacyTier('GHOST');
 
     // Step 2: Hide requested panels
@@ -279,7 +281,7 @@ export class ShadowModeControllerImpl implements ShadowModeController {
   /**
    * Deactivate shadow mode — restore normal operation.
    *
-   * 1. Restore privacy tier to SOFT.
+   * 1. Restore the privacy tier that was active before activation.
    * 2. Show all hidden panels.
    * 3. Disable decoy mode.
    * 4. Reset burner state.
@@ -292,8 +294,8 @@ export class ShadowModeControllerImpl implements ShadowModeController {
     this._activatedAt = 0;
     this._reason = 'manual';
 
-    // Restore privacy tier
-    this._privacyKernel.setPrivacyTier('SOFT');
+    // Restore whatever tier the user was in before activation
+    this._privacyKernel.setPrivacyTier(this._tierBeforeActivation);
 
     // Show all panels
     this._hiddenPanels.clear();
@@ -471,6 +473,9 @@ export class ShadowModeControllerImpl implements ShadowModeController {
    * 5. Emit the 'panic' event.
    */
   panic(): void {
+    if (!this._active) {
+      this._tierBeforeActivation = this._privacyKernel.getPrivacyTier();
+    }
     this._active = true;
     this._activatedAt = Date.now();
     this._reason = 'panic';

@@ -77,7 +77,13 @@ export class QuietFrame {
         count += matches.length;
       }
       result = result.replace(pattern, (match) => {
-        if (match.charAt(0) === match.charAt(0).toUpperCase()) {
+        // Preserve Title Case ("Always" -> "Often"). A SHOUTED match
+        // ("FAIL") is deliberately softened to lower case.
+        const isTitleCase =
+          match.charAt(0) === match.charAt(0).toUpperCase() &&
+          match.charAt(0) !== match.charAt(0).toLowerCase() &&
+          match.charAt(1) === match.charAt(1).toLowerCase();
+        if (isTitleCase) {
           return replacement.charAt(0).toUpperCase() + replacement.slice(1);
         }
         return replacement;

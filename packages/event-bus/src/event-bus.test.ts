@@ -272,9 +272,9 @@ describe('EventBusImpl', () => {
       const handler = vi.fn();
       bus.subscribe('user.*', handler);
 
-      bus.emit({ type: 'user.login', payload: null, priority: 'NORMAL', source: 'test', traceId: 't1' });
-      bus.emit({ type: 'user.logout', payload: null, priority: 'NORMAL', source: 'test', traceId: 't2' });
-      bus.emit({ type: 'user.profile.update', payload: null, priority: 'NORMAL', source: 'test', traceId: 't3' });
+      bus.broadcast({ type: 'user.login', payload: null, priority: 'NORMAL', source: 'test', traceId: 't1' });
+      bus.broadcast({ type: 'user.logout', payload: null, priority: 'NORMAL', source: 'test', traceId: 't2' });
+      bus.broadcast({ type: 'user.profile.update', payload: null, priority: 'NORMAL', source: 'test', traceId: 't3' });
 
       await flushMicrotasks();
 
@@ -286,9 +286,9 @@ describe('EventBusImpl', () => {
       const handler = vi.fn();
       bus.subscribe('app.**', handler);
 
-      bus.emit({ type: 'app.init', payload: null, priority: 'NORMAL', source: 'test', traceId: 't1' });
-      bus.emit({ type: 'app.module.load', payload: null, priority: 'NORMAL', source: 'test', traceId: 't2' });
-      bus.emit({ type: 'app.deep.nested.event', payload: null, priority: 'NORMAL', source: 'test', traceId: 't3' });
+      bus.broadcast({ type: 'app.init', payload: null, priority: 'NORMAL', source: 'test', traceId: 't1' });
+      bus.broadcast({ type: 'app.module.load', payload: null, priority: 'NORMAL', source: 'test', traceId: 't2' });
+      bus.broadcast({ type: 'app.deep.nested.event', payload: null, priority: 'NORMAL', source: 'test', traceId: 't3' });
 
       await flushMicrotasks();
 
@@ -299,9 +299,9 @@ describe('EventBusImpl', () => {
       const handler = vi.fn();
       bus.subscribe('a.*.c', handler);
 
-      bus.emit({ type: 'a.b.c', payload: null, priority: 'NORMAL', source: 'test', traceId: 't1' });
-      bus.emit({ type: 'a.x.c', payload: null, priority: 'NORMAL', source: 'test', traceId: 't2' });
-      bus.emit({ type: 'a.b.d', payload: null, priority: 'NORMAL', source: 'test', traceId: 't3' });
+      bus.broadcast({ type: 'a.b.c', payload: null, priority: 'NORMAL', source: 'test', traceId: 't1' });
+      bus.broadcast({ type: 'a.x.c', payload: null, priority: 'NORMAL', source: 'test', traceId: 't2' });
+      bus.broadcast({ type: 'a.b.d', payload: null, priority: 'NORMAL', source: 'test', traceId: 't3' });
 
       await flushMicrotasks();
 
@@ -312,9 +312,9 @@ describe('EventBusImpl', () => {
       const handler = vi.fn();
       bus.subscribe('system.**', handler);
 
-      bus.emit({ type: 'system.start', payload: null, priority: 'NORMAL', source: 'test', traceId: 't1' });
-      bus.emit({ type: 'system.submodule.init', payload: null, priority: 'NORMAL', source: 'test', traceId: 't2' });
-      bus.emit({ type: 'other.system', payload: null, priority: 'NORMAL', source: 'test', traceId: 't3' });
+      bus.broadcast({ type: 'system.start', payload: null, priority: 'NORMAL', source: 'test', traceId: 't1' });
+      bus.broadcast({ type: 'system.submodule.init', payload: null, priority: 'NORMAL', source: 'test', traceId: 't2' });
+      bus.broadcast({ type: 'other.system', payload: null, priority: 'NORMAL', source: 'test', traceId: 't3' });
 
       await flushMicrotasks();
 
@@ -325,7 +325,7 @@ describe('EventBusImpl', () => {
       const handler = vi.fn();
       bus.subscribe('foo.*', handler);
 
-      bus.emit({ type: 'bar.baz', payload: null, priority: 'NORMAL', source: 'test', traceId: 't1' });
+      bus.broadcast({ type: 'bar.baz', payload: null, priority: 'NORMAL', source: 'test', traceId: 't1' });
       await flushMicrotasks();
 
       expect(handler).not.toHaveBeenCalled();

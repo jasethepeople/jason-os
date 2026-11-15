@@ -20,6 +20,14 @@ export const quiet_span_module = {
  * Provides lifecycle methods (init/getState/destroy) for the Jason-OS module system.
  */
 export class QuietSpan {
+  private lastId = 0;
+
+  /** Strictly increasing numeric id, so two calls in one millisecond never collide. */
+  private nextId(): number {
+    this.lastId = Math.max(Date.now(), this.lastId + 1);
+    return this.lastId;
+  }
+
   private state: QuietSpanState = {
     sessions: [],
     activeSession: null,
@@ -49,7 +57,7 @@ export class QuietSpan {
       throw new Error('Session already active');
     }
     const session: FocusSession = {
-      id: `qs-${Date.now()}`,
+      id: `qs-${this.nextId()}`,
       startedAt: Date.now(),
       endedAt: null,
       durationMin,

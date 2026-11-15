@@ -14,7 +14,7 @@
  * MemoryAdapter when browser-only stores are unavailable.
  */
 
-import type { PrivacyTier } from '@jason-os/shared';
+import type { PrivacyTier, PrivacyKernel } from '@jason-os/shared';
 import type { StorageAdapter } from './storage-adapter.js';
 import { MemoryAdapter } from './memory-adapter.js';
 import { LocalStorageAdapter } from './localstorage-adapter.js';
@@ -82,6 +82,31 @@ export class StorageRouter {
 
     adapterCache.set(cacheKey, adapter);
     return adapter;
+  }
+
+  /**
+   * Wipe every cached adapter for a tier and evict it from the cache.
+   * For GHOST this is what guarantees "memory only" also means "gone when
+   * the tier ends".
+   */
+  wipeTier(tier: PrivacyTier): void {
+    for (const [key, adapter] of adapterCache) {
+      if (!key.startsWith(`${tier}:`)) continue;
+      if (adapter instanceof MemoryAdapter) adapter.wipe();
+      adapterCache.delete(key);
+    }
+  }
+
+  /**
+   * Tie GHOST storage lifetime to the privacy kernel: GHOST data is wiped
+   * when entering and when leaving the tier. Returns an unsubscribe fn.
+   */
+  bindToKernel(kernel: PrivacyKernel): () => void {
+    let previous = kernel.getPrivacyTier();
+    return kernel.onTierChange((tier) => {
+      if (tier === 'GHOST' || previous === 'GHOST') this.wipeTier('GHOST');
+      previous = tier;
+    });
   }
 
   /** Clear the internal adapter cache (useful in tests). */

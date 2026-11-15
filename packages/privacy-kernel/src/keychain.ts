@@ -32,7 +32,7 @@ export class Keychain {
     const entry: KeyEntry = {
       key,
       createdAt: now,
-      expiresAt: ttl !== undefined && ttl >= 0 ? now + ttl : undefined,
+      expiresAt: ttl !== undefined && ttl > 0 ? now + ttl : undefined,
     };
     this.store.set(keyId, entry);
   }

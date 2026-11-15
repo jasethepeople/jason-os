@@ -33,6 +33,8 @@ const PRIORITY_RANK: Record<Priority, number> = {
 interface InternalSubscription extends Subscription {
   _patternRegex?: RegExp;
   _isPattern: boolean;
+  /** Set the moment a once-subscription is claimed, so it can never fire twice. */
+  _fired?: boolean;
 }
 
 // ------------------------------------------------------------------
@@ -294,27 +296,40 @@ export class EventBusImpl implements EventBus {
     this._removeSubscription(sub);
   }
 
-  private _dispatch<T>(event: EventPayload<T>): void {
-    const subs = this._subscriptions.get(event.type) ?? [];
+  /**
+   * Single dispatch path. emit() is targeted (exact subscribers only);
+   * broadcast() additionally reaches every glob subscriber that matches.
+   * Both share this code so priority ordering, once-handling and dead-letter
+   * behaviour can't drift apart again.
+   */
+  private _dispatch<T>(event: EventPayload<T>, includePatterns = false): void {
+    const exact = this._subscriptions.get(event.type) ?? [];
+    const patterns = includePatterns
+      ? this._patternSubs.filter(
+          (sub) => sub._patternRegex !== undefined && sub._patternRegex.test(event.type),
+        )
+      : [];
 
-    // Separate by sync vs async priority
-    const syncSubs: InternalSubscription[] = [];
+    // Snapshot + priority order across exact and pattern subscribers
+    const all = [...exact, ...patterns].sort(
+      (a, b) => PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority],
+    );
+
+    if (all.length === 0) {
+      this._addToDeadLetter(event as EventPayload);
+      return;
+    }
+
+    // CRITICAL handlers run synchronously, the rest in a microtask
     const asyncSubs: InternalSubscription[] = [];
-
-    for (const sub of subs) {
+    for (const sub of all) {
       if (sub.priority === 'CRITICAL') {
-        syncSubs.push(sub);
+        this._invokeHandler(sub, event);
       } else {
         asyncSubs.push(sub);
       }
     }
 
-    // Execute CRITICAL handlers synchronously, in priority order
-    for (const sub of syncSubs) {
-      this._invokeHandler(sub, event);
-    }
-
-    // Execute async handlers via queueMicrotask
     if (asyncSubs.length > 0) {
       queueMicrotask(() => {
         for (const sub of asyncSubs) {
@@ -322,73 +337,21 @@ export class EventBusImpl implements EventBus {
         }
       });
     }
-
-    // If no subscribers at all, store in dead letter queue
-    if (syncSubs.length === 0 && asyncSubs.length === 0) {
-      this._addToDeadLetter(event as EventPayload);
-    }
   }
 
   private _dispatchBroadcast<T>(event: EventPayload<T>): void {
-    const subs = this._subscriptions.get(event.type) ?? [];
-
-    // Collect matching pattern subscribers
-    const matchingPatterns: InternalSubscription[] = [];
-    for (const sub of this._patternSubs) {
-      if (sub._patternRegex && sub._patternRegex.test(event.type)) {
-        matchingPatterns.push(sub);
-      }
-    }
-
-    // Separate by sync vs async priority
-    const syncSubs: InternalSubscription[] = [];
-    const asyncSubs: InternalSubscription[] = [];
-
-    for (const sub of subs) {
-      if (sub.priority === 'CRITICAL') {
-        syncSubs.push(sub);
-      } else {
-        asyncSubs.push(sub);
-      }
-    }
-
-    const syncPatterns: InternalSubscription[] = [];
-    const asyncPatterns: InternalSubscription[] = [];
-
-    for (const sub of matchingPatterns) {
-      if (sub.priority === 'CRITICAL') {
-        syncPatterns.push(sub);
-      } else {
-        asyncPatterns.push(sub);
-      }
-    }
-
-    // Execute CRITICAL handlers synchronously
-    for (const sub of syncSubs) {
-      this._invokeHandler(sub, event);
-    }
-    for (const sub of syncPatterns) {
-      this._invokeHandler(sub, event);
-    }
-
-    // Execute async handlers via queueMicrotask
-    const allAsync = [...asyncSubs, ...asyncPatterns];
-    if (allAsync.length > 0) {
-      queueMicrotask(() => {
-        for (const sub of allAsync) {
-          this._invokeHandler(sub, event);
-        }
-      });
-    }
-
-    // Dead letter: only if NO subscribers at all (exact + pattern)
-    const totalSubs = subs.length + matchingPatterns.length;
-    if (totalSubs === 0) {
-      this._addToDeadLetter(event as EventPayload);
-    }
+    this._dispatch(event, true);
   }
 
   private _invokeHandler<T>(sub: InternalSubscription, event: EventPayload<T>): void {
+    // A once-subscription is claimed *before* running, and unregistered
+    // immediately. Async handlers are queued in a microtask, so removing it
+    // only afterwards let a second emit() grab it before the first ran.
+    if (sub.once) {
+      if (sub._fired) return;
+      sub._fired = true;
+      this._removeSubscriptionById(sub);
+    }
     try {
       const result = sub.handler(event as EventPayload<unknown>);
       if (result && typeof result.then === 'function') {
@@ -401,10 +364,6 @@ export class EventBusImpl implements EventBus {
     } catch (err) {
       // Sync error isolated — do not rethrow
       console.error(`[EventBus] Handler error for "${sub.type}":`, err);
-    } finally {
-      if (sub.once) {
-        this._removeSubscriptionById(sub);
-      }
     }
   }
 
